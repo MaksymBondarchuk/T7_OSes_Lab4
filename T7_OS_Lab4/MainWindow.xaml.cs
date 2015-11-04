@@ -20,9 +20,19 @@ namespace T7_OS_Lab4
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly BinaryTree _tree = new BinaryTree();
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Badd_Click(object sender, RoutedEventArgs e)
+        {
+            _tree.Add(TextBoxNewIdentifier.Text);
+            TextBoxNewIdentifier.Clear();
+            TreeViewTree.Items.Clear();
+            TreeViewTree.Items.Add(_tree.ToTreeViewItem());
         }
     }
 }

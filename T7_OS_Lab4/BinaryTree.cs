@@ -1,4 +1,6 @@
-﻿namespace T7_OS_Lab4
+﻿using System.Windows.Controls;
+
+namespace T7_OS_Lab4
 {
     public class BinaryTree
     {
@@ -56,6 +58,31 @@
 
             _identifier = identifier;
             AddRecursive(_head);
+        }
+
+
+        private static TreeViewItem ToTreeViewItemRecursive(Node currentNode)
+        {
+            var node = new TreeViewItem
+            {
+                Header = currentNode.Identifier,
+                IsExpanded = true
+            };
+
+            if (currentNode.ChildLeft == null && currentNode.ChildRight == null)
+                node.ItemsSource = new object[] { };
+            else if (currentNode.ChildLeft == null && currentNode.ChildRight != null)
+                node.ItemsSource = new object[] { "<None>", ToTreeViewItemRecursive(currentNode.ChildRight) };
+            else if (currentNode.ChildLeft != null && currentNode.ChildRight == null)
+                node.ItemsSource = new object[] { ToTreeViewItemRecursive(currentNode.ChildLeft), "<None>" };
+            else node.ItemsSource = new object[] { ToTreeViewItemRecursive(currentNode.ChildLeft), ToTreeViewItemRecursive(currentNode.ChildRight) };
+
+            return node;
+        }
+
+        public TreeViewItem ToTreeViewItem()
+        {
+            return ToTreeViewItemRecursive(_head);
         }
     }
 }
