@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace T7_OS_Lab4
 {
@@ -6,8 +8,10 @@ namespace T7_OS_Lab4
     {
         private Node _head;
         private string _identifier;
+        private readonly List<string> _path = new List<string>();
+        public bool WasFound;
 
-        private class Node
+        public class Node
         {
             public readonly string Identifier;
             public Node ChildLeft;
@@ -83,6 +87,27 @@ namespace T7_OS_Lab4
         public TreeViewItem ToTreeViewItem()
         {
             return ToTreeViewItemRecursive(_head);
+        }
+
+        private Node FindNodeRecursive(Node currentNode)
+        {
+            if (currentNode == null)
+                return null;
+            _path.Add(currentNode.Identifier);
+            return _identifier == currentNode.Identifier ? currentNode : FindNodeRecursive(string.CompareOrdinal(_identifier, currentNode.Identifier) < 0 ? currentNode.ChildLeft : currentNode.ChildRight);
+        }
+
+        private Node FindNode(string identifier)
+        {
+            _identifier = identifier;
+            return FindNodeRecursive(_head);
+        }
+
+        public IEnumerable<string> Find(string identifier)
+        {
+            _path.Clear();
+            WasFound = FindNode(identifier) != null;
+            return _path;
         }
     }
 }
