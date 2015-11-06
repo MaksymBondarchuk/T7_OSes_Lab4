@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace T7_OS_Lab4
@@ -13,7 +14,7 @@ namespace T7_OS_Lab4
         // For Find
         private readonly List<string> _path = new List<string>();
         public bool WasFound;
-        
+
         public class Node
         {
             public string Identifier;
@@ -89,7 +90,8 @@ namespace T7_OS_Lab4
 
         public TreeViewItem ToTreeViewItem()
         {
-            return ToTreeViewItemRecursive(_head);
+            //MessageBox.Show("Changed");
+            return _head != null ? ToTreeViewItemRecursive(_head) : null;
         }
 
         private Node FindNodeRecursive(Node currentNode)
