@@ -41,29 +41,30 @@ namespace T7_OS_Lab4
             _tree.Add("dda");
             _tree.Add("nna");
             _tree.Add("ooa");
-            TreeViewTree.Items.Add(_tree.ToTreeViewItem());
+            TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
         }
 
         private void HidePath()
         {
             ListViewPath.Visibility = Visibility.Visible;
-            TreeViewTree.Margin = new Thickness(10, 10, 147, 55);
+            TreeViewLeft.Margin = new Thickness(10, 10, 147, 55);
         }
 
         private void ShowPath()
         {
             ListViewPath.Visibility = Visibility.Collapsed;
-            TreeViewTree.Margin = new Thickness(10, 10, 10, 55);
+            TreeViewLeft.Margin = new Thickness(10, 10, 10, 55);
         }
 
         private void Badd_Click(object sender, RoutedEventArgs e)
         {
+            HidePath();
             _tree.Find(TextBoxNewIdentifier.Text);
             if (!_tree.WasFound)
             {
                 _tree.Add(TextBoxNewIdentifier.Text);
-                TreeViewTree.Items.Clear();
-                TreeViewTree.Items.Add(_tree.ToTreeViewItem());
+                TreeViewLeft.Items.Clear();
+                TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
                 StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - successfully added";
             }
             else StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - already exist";
@@ -73,6 +74,7 @@ namespace T7_OS_Lab4
 
         private void ButtonFind_Click(object sender, RoutedEventArgs e)
         {
+            ShowPath();
             var path = _tree.Find(TextBoxNewIdentifier.Text);
             ListViewPath.Items.Clear();
             foreach (var t in path)
@@ -85,12 +87,13 @@ namespace T7_OS_Lab4
 
         private void ButtonRemove_Click(object sender, RoutedEventArgs e)
         {
+            HidePath();
             _tree.Find(TextBoxNewIdentifier.Text);
             if (_tree.WasFound)
             {
                 _tree.Remove(TextBoxNewIdentifier.Text);
-                TreeViewTree.Items.Clear();
-                TreeViewTree.Items.Add(_tree.ToTreeViewItem());
+                TreeViewLeft.Items.Clear();
+                TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
                 StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - successfully removed";
             }
             else StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - no such identifier";
