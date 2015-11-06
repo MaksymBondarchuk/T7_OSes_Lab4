@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Controls;
 
 namespace T7_OS_Lab4
@@ -7,13 +6,17 @@ namespace T7_OS_Lab4
     public class BinaryTree
     {
         private Node _head;
+
+        // For Add
         private string _identifier;
+
+        // For Find
         private readonly List<string> _path = new List<string>();
         public bool WasFound;
-
+        
         public class Node
         {
-            public readonly string Identifier;
+            public string Identifier;
             public Node ChildLeft;
             public Node ChildRight;
             public Node Parent;
@@ -65,7 +68,7 @@ namespace T7_OS_Lab4
         }
 
 
-        private static TreeViewItem ToTreeViewItemRecursive(Node currentNode)
+        private TreeViewItem ToTreeViewItemRecursive(Node currentNode)
         {
             var node = new TreeViewItem
             {
@@ -108,6 +111,56 @@ namespace T7_OS_Lab4
             _path.Clear();
             WasFound = FindNode(identifier) != null;
             return _path;
+        }
+
+        private void RemoveNode(Node node)
+        {
+            // Has no children
+            if (node.ChildLeft == null && node.ChildRight == null)
+            {
+                if (node.Parent.ChildLeft == node)
+                    node.Parent.ChildLeft = null;
+                else node.Parent.ChildRight = null;
+                return;
+            }
+
+            // Has only one child
+            if (node.ChildLeft == null)
+            {
+                if (node.Parent.ChildLeft == node)
+                    node.Parent.ChildLeft = node.ChildRight;
+                else node.Parent.ChildRight = node.ChildRight;
+                node.ChildRight.Parent = node.Parent;
+                return;
+            }
+
+            if (node.ChildRight == null)
+            {
+                if (node.Parent.ChildLeft == node)
+                    node.Parent.ChildLeft = node.ChildLeft;
+                else
+                    node.Parent.ChildRight = node.ChildLeft;
+                node.ChildLeft.Parent = node.Parent;
+                return;
+            }
+
+            // Has 2 children
+            // * find a minimum value in the right subtree;
+            // * replace value of the node to be removed with found minimum.Now, right subtree contains a duplicate!;
+            // * apply remove to the right subtree to remove a duplicate;
+            var minNode = node.ChildRight;
+            while (minNode.ChildLeft != null)
+                minNode = minNode.ChildLeft;
+
+            node.Identifier = minNode.Identifier;
+            RemoveNode(minNode);
+        }
+
+        public void Remove(string identifier)
+        {
+            var node = FindNode(identifier);
+            if (node != null)
+                RemoveNode(node);
         }
     }
 }
