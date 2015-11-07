@@ -233,7 +233,8 @@ namespace T7_OS_Lab4
         {
             var nodeNew = new TreeViewItem
             {
-                Header = $"{node.Identifier,4}    ({node.Height})",
+                Header = node.Identifier,
+                //Header = $"{node.Identifier,4}    ({node.Height})",
                 IsExpanded = true
             };
 

@@ -53,16 +53,15 @@ namespace T7_OS_Lab4
 
             HideRight();
             HidePath();
+            TextBoxNewIdentifier.Focus();
         }
 
         private void HidePath()
         {
-            if (!_pathHidden)
-            {
-                ListViewPath.Visibility = Visibility.Collapsed;
-                TreeViewLeft.Margin = new Thickness(_marginTreeLeft, _marginTreeTop, _marginTreeLeft, _marginTreeBottom);
-                _pathHidden = true;
-            }
+            if (_pathHidden) return;
+            ListViewPath.Visibility = Visibility.Collapsed;
+            TreeViewLeft.Margin = new Thickness(_marginTreeLeft, _marginTreeTop, _marginTreeLeft, _marginTreeBottom);
+            _pathHidden = true;
         }
 
         private void ShowPath()
@@ -106,6 +105,7 @@ namespace T7_OS_Lab4
             }
             TextBoxNewIdentifier.Clear();
             StatusBarTextBlock.Text = !_tree.WasFound ? $"{identifier} - successfully added" : $"{identifier} - already exist";
+            TextBoxNewIdentifier.Focus();
         }
 
         private void ButtonFind_Click(object sender, RoutedEventArgs e)
@@ -118,6 +118,7 @@ namespace T7_OS_Lab4
             TextBoxNewIdentifier.Clear();
             StatusBarTextBlock.Text = _tree.WasFound ? $"{identifier} - was found" : $"{identifier} - wasn't found";
             ShowPath();
+            TextBoxNewIdentifier.Focus();
         }
 
         private void ButtonRemove_Click(object sender, RoutedEventArgs e)
@@ -147,6 +148,7 @@ namespace T7_OS_Lab4
             if (_tree.WasFound)
                 ShowRight();
             StatusBarTextBlock.Text = _tree.WasFound ? $"{identifier} - successfully removed" : $"{identifier} - no such identifier";
+            TextBoxNewIdentifier.Focus();
         }
 
         private void TextBoxNewIdentifier_TextChanged(object sender, TextChangedEventArgs e)
