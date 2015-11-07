@@ -45,6 +45,13 @@ namespace T7_OS_Lab4
                 else if (ChildLeft != null && ChildRight != null)
                     Height = Math.Max(ChildLeft.Height, ChildRight.Height) + 1;
             }
+
+            public bool NeedBalance()
+            {
+                return ChildRight == null && ChildLeft != null && ChildLeft.Height == 2 ||
+                       ChildRight != null && ChildLeft == null && ChildRight.Height == 2 ||
+                       ChildRight != null && ChildLeft != null && Math.Abs(ChildLeft.Height - ChildRight.Height) == 2;
+            }
         }
 
         private void Balance(Node node)
@@ -189,9 +196,7 @@ namespace T7_OS_Lab4
                 }
                 AddRecursive(node.ChildLeft);
                 node.UpdateHeight();
-                if (node.ChildRight == null && node.ChildLeft != null && node.ChildLeft.Height == 2 ||
-                    node.ChildRight != null && node.ChildLeft == null && node.ChildRight.Height == 2 ||
-                    node.ChildRight != null && node.ChildLeft != null && Math.Abs(node.ChildLeft.Height - node.ChildRight.Height) == 2)
+                if (node.NeedBalance())
                     Balance(node);
             }
 
@@ -206,9 +211,7 @@ namespace T7_OS_Lab4
                 }
                 AddRecursive(node.ChildRight);
                 node.UpdateHeight();
-                if (node.ChildRight == null && node.ChildLeft != null && node.ChildLeft.Height == 2 ||
-                    node.ChildRight != null && node.ChildLeft == null && node.ChildRight.Height == 2 ||
-                    node.ChildRight != null && node.ChildLeft != null && Math.Abs(node.ChildLeft.Height - node.ChildRight.Height) == 2)
+                if (node.NeedBalance())
                     Balance(node);
             }
         }
@@ -271,47 +274,90 @@ namespace T7_OS_Lab4
             return _path;
         }
 
+        private void RemoveBalance(Node node)
+        {
+            while (node.Parent != null)
+            {
+                if (node.Parent.NeedBalance())
+                    Balance(node.Parent);
+                else
+                    node.Parent.UpdateHeight();
+                node = node.Parent;
+            }
+        }
+
         private void RemoveNode(Node node)
         {
             // Is leaf
             if (node.ChildLeft == null && node.ChildRight == null)
             {
+                // If removing head
+                if (node.Parent == null)
+                {
+                    _head = null;
+                    return;
+                }
+
                 if (node.Parent.ChildLeft == node)
                     node.Parent.ChildLeft = null;
                 else node.Parent.ChildRight = null;
+
+                RemoveBalance(node);
                 return;
             }
 
             // Has only one child
             if (node.ChildLeft == null)
             {
+                if (_head == node)
+                    _head = node.ChildLeft;
+
                 if (node.Parent.ChildLeft == node)
                     node.Parent.ChildLeft = node.ChildRight;
                 else node.Parent.ChildRight = node.ChildRight;
                 node.ChildRight.Parent = node.Parent;
+
+                RemoveBalance(node);
                 return;
             }
 
             if (node.ChildRight == null)
             {
+                if (_head == node)
+                    _head = node.ChildRight;
+
                 if (node.Parent.ChildLeft == node)
                     node.Parent.ChildLeft = node.ChildLeft;
                 else
                     node.Parent.ChildRight = node.ChildLeft;
                 node.ChildLeft.Parent = node.Parent;
+
+                RemoveBalance(node);
                 return;
             }
 
             // Has 2 children
-            // * find a minimum value in the right subtree;
-            // * replace value of the node to be removed with found minimum.Now, right subtree contains a duplicate!;
+            // * find a min value in the right subtree or max value in the left subtree;
+            // * replace value of the node to be removed with found minimum. Now, right subtree contains a duplicate!;
             // * apply remove to the right subtree to remove a duplicate;
-            var minNode = node.ChildRight;
-            while (minNode.ChildLeft != null)
-                minNode = minNode.ChildLeft;
+            if (node.ChildLeft.Height >= node.ChildRight.Height)
+            {
+                var maxNode = node.ChildRight;
+                while (maxNode.ChildLeft != null)
+                    maxNode = maxNode.ChildRight;
 
-            node.Identifier = minNode.Identifier;
-            RemoveNode(minNode);
+                node.Identifier = maxNode.Identifier;
+                RemoveNode(maxNode);
+            }
+            else
+            {
+                var minNode = node.ChildRight;
+                while (minNode.ChildLeft != null)
+                    minNode = minNode.ChildLeft;
+
+                node.Identifier = minNode.Identifier;
+                RemoveNode(minNode);
+            }
         }
 
         public void Remove(string identifier)

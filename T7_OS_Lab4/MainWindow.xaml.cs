@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace T7_OS_Lab4
 {
@@ -8,7 +9,7 @@ namespace T7_OS_Lab4
     /// </summary>
     public partial class MainWindow
     {
-        private readonly BinaryTree _tree = new BinaryTree();
+        private BinaryTree _tree = new BinaryTree();
         private readonly double _marginTreeLeft;
         private readonly double _marginTreeTop;
         private readonly double _marginTreeRight;
@@ -76,8 +77,8 @@ namespace T7_OS_Lab4
             if (!_rightHidden)
             {
                 GridWindow.ColumnDefinitions.Clear();
-                GridWindow.ColumnDefinitions.Add(new ColumnDefinition {Width = new GridLength(100, GridUnitType.Star)});
-                GridWindow.ColumnDefinitions.Add(new ColumnDefinition {Width = new GridLength(0, GridUnitType.Star)});
+                GridWindow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100, GridUnitType.Star) });
+                GridWindow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Star) });
 
                 TreeViewLeft.Items.Clear();
                 TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
@@ -96,16 +97,15 @@ namespace T7_OS_Lab4
         private void Badd_Click(object sender, RoutedEventArgs e)
         {
             _tree.Find(TextBoxNewIdentifier.Text);
+            var identifier = TextBoxNewIdentifier.Text;
             if (!_tree.WasFound)
             {
                 _tree.Add(TextBoxNewIdentifier.Text);
                 TreeViewLeft.Items.Clear();
                 TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
-                StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - successfully added";
             }
-            else StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - already exist";
             TextBoxNewIdentifier.Clear();
-
+            StatusBarTextBlock.Text = !_tree.WasFound ? $"{identifier} - successfully added" : $"{identifier} - already exist";
         }
 
         private void ButtonFind_Click(object sender, RoutedEventArgs e)
@@ -114,13 +114,24 @@ namespace T7_OS_Lab4
             ListViewPath.Items.Clear();
             foreach (var t in path)
                 ListViewPath.Items.Add(new ListViewItem { Content = t });
-            StatusBarTextBlock.Text = _tree.WasFound ? $"{TextBoxNewIdentifier.Text} - was found" : $"{TextBoxNewIdentifier.Text} - wasn't found";
+            var identifier = TextBoxNewIdentifier.Text;
             TextBoxNewIdentifier.Clear();
+            StatusBarTextBlock.Text = _tree.WasFound ? $"{identifier} - was found" : $"{identifier} - wasn't found";
             ShowPath();
         }
 
         private void ButtonRemove_Click(object sender, RoutedEventArgs e)
         {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                _tree = new BinaryTree();
+                TreeViewLeft.Items.Clear();
+                TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
+                HideRight();
+                //MessageBox.Show("Double");
+                return;
+            }
+
             _tree.Find(TextBoxNewIdentifier.Text);
             if (_tree.WasFound)
             {
@@ -130,15 +141,19 @@ namespace T7_OS_Lab4
                 StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - successfully removed";
             }
             else StatusBarTextBlock.Text = $"{TextBoxNewIdentifier.Text} - no such identifier";
+
+            var identifier = TextBoxNewIdentifier.Text;
             TextBoxNewIdentifier.Clear();
             if (_tree.WasFound)
                 ShowRight();
+            StatusBarTextBlock.Text = _tree.WasFound ? $"{identifier} - successfully removed" : $"{identifier} - no such identifier";
         }
 
         private void TextBoxNewIdentifier_TextChanged(object sender, TextChangedEventArgs e)
         {
             HideRight();
             HidePath();
+            StatusBarTextBlock.Text = "";
             //MessageBox.Show("Changed");
         }
     }
