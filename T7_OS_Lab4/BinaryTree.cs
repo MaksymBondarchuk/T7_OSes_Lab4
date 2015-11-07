@@ -21,10 +21,9 @@ namespace T7_OS_Lab4
             public Node ChildLeft;
             public Node ChildRight;
             public Node Parent;
-            public int CountLeft;
-            public int CountRight;
+            public int Height;
 
-            public Node(string identifier, Node parent, int countLeft, int countRight)
+            public Node(string identifier, Node parent, int height)
             {
                 Identifier = identifier;
                 Parent = parent;
@@ -32,46 +31,34 @@ namespace T7_OS_Lab4
                 ChildLeft = null;
                 ChildRight = null;
 
-                CountLeft = countLeft;
-                CountRight = countRight;
+                Height = height;
             }
 
-            private Node(string identifier, Node parent, Node childLeft, Node childRight, int countLeft, int countRight)
+            public void UpdateHeight()
             {
-                Identifier = identifier;
-                Parent = parent;
-
-                ChildLeft = null;
-                ChildRight = null;
-
-                CountLeft = countLeft;
-                CountRight = countRight;
-
-                ChildLeft = childLeft;
-                ChildRight = childRight;
-            }
-
-            public Node Copy()
-            {
-                return new Node(Identifier, Parent, ChildLeft, ChildRight, CountLeft, CountRight);
+                if (ChildLeft == null && ChildRight == null)
+                    Height = 1;
+                else if (ChildLeft == null && ChildRight != null)
+                    Height = ChildRight.Height + 1;
+                else if (ChildLeft != null && ChildRight == null)
+                    Height = ChildLeft.Height + 1;
+                else if (ChildLeft != null && ChildRight != null)
+                    Height = Math.Max(ChildLeft.Height, ChildRight.Height) + 1;
             }
         }
 
         private void Balance(Node node)
         {
-            if (node.CountRight - node.CountLeft == 2)
+            if (node.ChildLeft == null && node.ChildRight != null && node.ChildRight.Height == 2 ||
+                node.ChildLeft != null && node.ChildRight != null && node.ChildRight.Height - node.ChildLeft.Height == 2)
             {
+                var a = node;
+                var b = node.ChildRight;
+                var c = b.ChildLeft;
+
                 // Small left
-                if (node.ChildRight.CountLeft <= node.ChildRight.CountRight)
+                if (c == null || b.ChildRight != null && c.Height <= b.ChildRight.Height)
                 {
-                    var a = node;
-                    var b = node.ChildRight;
-                    var c = b.ChildLeft;
-
-                    //var a = node.Copy();
-                    //var b = node.ChildRight.Copy();
-                    //var c = b.ChildLeft.Copy();
-
                     if (a.Parent != null)
                         if (a.Parent.ChildLeft == a)
                             a.Parent.ChildLeft = b;
@@ -85,10 +72,8 @@ namespace T7_OS_Lab4
                     b.ChildLeft = a;
                     a.ChildRight = c;
 
-                    if (c != null)
-                        a.CountRight = c.CountLeft + c.CountRight + 1;
-                    else a.CountRight = 0;
-                    b.CountLeft = a.CountLeft + a.CountRight + 1;
+                    a.UpdateHeight();
+                    b.UpdateHeight();
 
                     if (_head == a)
                         _head = b;
@@ -96,17 +81,8 @@ namespace T7_OS_Lab4
                 else
                 {
                     // Big left
-                    var a = node;
-                    var b = a.ChildRight;
-                    var c = b.ChildLeft;
                     var m = c.ChildLeft;
                     var n = c.ChildRight;
-
-                    //var a = node.Copy();
-                    //var b = a.ChildRight.Copy();
-                    //var c = b.ChildLeft.Copy();
-                    //var m = c.ChildLeft.Copy();
-                    //var n = c.ChildRight.Copy();
 
                     if (a.Parent != null)
                         if (a.Parent.ChildLeft == a)
@@ -126,14 +102,9 @@ namespace T7_OS_Lab4
                     c.ChildLeft = a;
                     c.ChildRight = b;
 
-                    if (m != null)
-                        a.CountRight = m.CountLeft + m.CountRight + 1;
-                    else a.CountRight = 0;
-                    if (n != null)
-                        b.CountLeft = n.CountLeft + n.CountRight + 1;
-                    else b.CountLeft = 0;
-                    c.CountLeft = a.CountLeft + a.CountRight + 1;
-                    c.CountRight = b.CountLeft + b.CountRight + 1;
+                    a.UpdateHeight();
+                    b.UpdateHeight();
+                    c.UpdateHeight();
 
                     if (_head == a)
                         _head = c;
@@ -141,19 +112,17 @@ namespace T7_OS_Lab4
                 return;
             }
 
-            if (node.CountLeft - node.CountRight == 2)
+            // ReSharper disable once InvertIf
+            if (node.ChildRight == null && node.ChildLeft != null && node.ChildLeft.Height == 2 ||
+                node.ChildRight != null && node.ChildLeft != null && node.ChildLeft.Height - node.ChildRight.Height == 2)
             {
+                var a = node;
+                var b = a.ChildLeft;
+                var c = b.ChildRight;
+
                 // Small right
-                if (node.ChildLeft.CountRight <= node.ChildLeft.CountLeft)
+                if (c == null || b.ChildLeft != null && c.Height <= b.ChildLeft.Height)
                 {
-                    var a = node;
-                    var b = node.ChildLeft;
-                    var c = b.ChildRight;
-
-                    //var a = node.Copy();
-                    //var b = node.ChildLeft.Copy();
-                    //var c = b.ChildRight.Copy();
-
                     if (a.Parent != null)
                         if (a.Parent.ChildLeft == a)
                             a.Parent.ChildLeft = b;
@@ -169,27 +138,16 @@ namespace T7_OS_Lab4
                     a.ChildLeft = c;
                     b.ChildRight = a;
 
-                    if (c != null)
-                        a.CountLeft = c.CountLeft + c.CountRight + 1;
-                    else a.CountLeft = 0;
-                    b.CountRight = a.CountLeft + a.CountRight + 1;
+                    a.UpdateHeight();
+                    b.UpdateHeight();
 
                     if (_head == a)
                         _head = b;
                 }
                 else
                 {
-                    var a = node;
-                    var b = a.ChildRight;
-                    var c = b.ChildRight;
                     var m = c.ChildLeft;
                     var n = c.ChildRight;
-
-                    //var a = node.Copy();
-                    //var b = a.ChildRight.Copy();
-                    //var c = b.ChildRight.Copy();
-                    //var m = c.ChildLeft.Copy();
-                    //var n = c.ChildRight.Copy();
 
                     if (a.Parent != null)
                         if (a.Parent.ChildLeft == a)
@@ -209,50 +167,49 @@ namespace T7_OS_Lab4
                     c.ChildLeft = b;
                     c.ChildRight = a;
 
-                    if (m != null)
-                        b.CountRight = m.CountLeft + m.CountRight + 1;
-                    else b.CountRight = 0;
-                    if (n != null)
-                        a.CountLeft = n.CountLeft + n.CountRight + 1;
-                    else a.CountLeft = 0;
-                    c.CountLeft = b.CountLeft + b.CountRight + 1;
-                    c.CountRight = a.CountLeft + a.CountRight + 1;
+                    a.UpdateHeight();
+                    b.UpdateHeight();
+                    c.UpdateHeight();
 
                     if (_head == a)
-                        _head = b;
+                        _head = c;
                 }
             }
         }
 
-        private void AddRecursive(Node currentNode)
+        private void AddRecursive(Node node)
         {
-            if (string.CompareOrdinal(_identifier, currentNode.Identifier) < 0)
+            if (string.CompareOrdinal(_identifier, node.Identifier) < 0)
             {
-                if (currentNode.ChildLeft == null)
+                if (node.ChildLeft == null)
                 {
-                    currentNode.ChildLeft = new Node(_identifier, currentNode, 0, 0);
-                    currentNode.CountLeft++;
+                    node.ChildLeft = new Node(_identifier, node, 1);
+                    node.Height = 2;
                     return;
                 }
-                currentNode.CountLeft++;
-                AddRecursive(currentNode.ChildLeft);
-                if (Math.Abs(currentNode.CountLeft - currentNode.CountRight) == 2)
-                    Balance(currentNode);
+                AddRecursive(node.ChildLeft);
+                node.UpdateHeight();
+                if (node.ChildRight == null && node.ChildLeft != null && node.ChildLeft.Height == 2 ||
+                    node.ChildRight != null && node.ChildLeft == null && node.ChildRight.Height == 2 ||
+                    node.ChildRight != null && node.ChildLeft != null && Math.Abs(node.ChildLeft.Height - node.ChildRight.Height) == 2)
+                    Balance(node);
             }
 
             // ReSharper disable once InvertIf
-            if (string.CompareOrdinal(currentNode.Identifier, _identifier) < 0)
+            if (string.CompareOrdinal(node.Identifier, _identifier) < 0)
             {
-                if (currentNode.ChildRight == null)
+                if (node.ChildRight == null)
                 {
-                    currentNode.ChildRight = new Node(_identifier, currentNode, 0, 0);
-                    currentNode.CountRight++;
+                    node.ChildRight = new Node(_identifier, node, 1);
+                    node.Height = 2;
                     return;
                 }
-                currentNode.CountRight++;
-                AddRecursive(currentNode.ChildRight);
-                if (Math.Abs(currentNode.CountLeft - currentNode.CountRight) == 2)
-                    Balance(currentNode);
+                AddRecursive(node.ChildRight);
+                node.UpdateHeight();
+                if (node.ChildRight == null && node.ChildLeft != null && node.ChildLeft.Height == 2 ||
+                    node.ChildRight != null && node.ChildLeft == null && node.ChildRight.Height == 2 ||
+                    node.ChildRight != null && node.ChildLeft != null && Math.Abs(node.ChildLeft.Height - node.ChildRight.Height) == 2)
+                    Balance(node);
             }
         }
 
@@ -260,7 +217,7 @@ namespace T7_OS_Lab4
         {
             if (_head == null)
             {
-                _head = new Node(identifier, null, 0, 0);
+                _head = new Node(identifier, null, 1);
                 return;
             }
 
@@ -269,23 +226,23 @@ namespace T7_OS_Lab4
         }
 
 
-        private TreeViewItem ToTreeViewItemRecursive(Node currentNode)
+        private TreeViewItem ToTreeViewItemRecursive(Node node)
         {
-            var node = new TreeViewItem
+            var nodeNew = new TreeViewItem
             {
-                Header = $"{currentNode.Identifier,4}    ({currentNode.CountLeft}, {currentNode.CountRight})",
+                Header = $"{node.Identifier,4}    ({node.Height})",
                 IsExpanded = true
             };
 
-            if (currentNode.ChildLeft == null && currentNode.ChildRight == null)
-                node.ItemsSource = new object[] { };
-            else if (currentNode.ChildLeft == null && currentNode.ChildRight != null)
-                node.ItemsSource = new object[] { "<None>", ToTreeViewItemRecursive(currentNode.ChildRight) };
-            else if (currentNode.ChildLeft != null && currentNode.ChildRight == null)
-                node.ItemsSource = new object[] { ToTreeViewItemRecursive(currentNode.ChildLeft), "<None>" };
-            else node.ItemsSource = new object[] { ToTreeViewItemRecursive(currentNode.ChildLeft), ToTreeViewItemRecursive(currentNode.ChildRight) };
+            if (node.ChildLeft == null && node.ChildRight == null)
+                nodeNew.ItemsSource = new object[] { };
+            else if (node.ChildLeft == null && node.ChildRight != null)
+                nodeNew.ItemsSource = new object[] { "<None>", ToTreeViewItemRecursive(node.ChildRight) };
+            else if (node.ChildLeft != null && node.ChildRight == null)
+                nodeNew.ItemsSource = new object[] { ToTreeViewItemRecursive(node.ChildLeft), "<None>" };
+            else nodeNew.ItemsSource = new object[] { ToTreeViewItemRecursive(node.ChildLeft), ToTreeViewItemRecursive(node.ChildRight) };
 
-            return node;
+            return nodeNew;
         }
 
         public TreeViewItem ToTreeViewItem()
@@ -293,12 +250,12 @@ namespace T7_OS_Lab4
             return _head != null ? ToTreeViewItemRecursive(_head) : null;
         }
 
-        private Node FindNodeRecursive(Node currentNode)
+        private Node FindNodeRecursive(Node node)
         {
-            if (currentNode == null)
+            if (node == null)
                 return null;
-            _path.Add(currentNode.Identifier);
-            return _identifier == currentNode.Identifier ? currentNode : FindNodeRecursive(string.CompareOrdinal(_identifier, currentNode.Identifier) < 0 ? currentNode.ChildLeft : currentNode.ChildRight);
+            _path.Add(node.Identifier);
+            return _identifier == node.Identifier ? node : FindNodeRecursive(string.CompareOrdinal(_identifier, node.Identifier) < 0 ? node.ChildLeft : node.ChildRight);
         }
 
         private Node FindNode(string identifier)
@@ -316,7 +273,7 @@ namespace T7_OS_Lab4
 
         private void RemoveNode(Node node)
         {
-            // Has no children
+            // Is leaf
             if (node.ChildLeft == null && node.ChildRight == null)
             {
                 if (node.Parent.ChildLeft == node)

@@ -29,8 +29,8 @@ namespace T7_OS_Lab4
             _marginTreeBottom = TreeViewLeft.Margin.Bottom;
 
 
-            _tree.Add("z");
-            _tree.Add("y");
+            //_tree.Add("y");
+            //_tree.Add("z");
             //_tree.Add("c");
 
             //_tree.Add("mmm");
