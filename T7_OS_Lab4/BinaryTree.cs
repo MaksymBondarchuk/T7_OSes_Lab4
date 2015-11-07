@@ -72,6 +72,11 @@ namespace T7_OS_Lab4
                     //var b = node.ChildRight.Copy();
                     //var c = b.ChildLeft.Copy();
 
+                    if (a.Parent != null)
+                        if (a.Parent.ChildLeft == a)
+                            a.Parent.ChildLeft = b;
+                        else a.Parent.ChildRight = b;
+
                     b.Parent = a.Parent;
                     a.Parent = b;
                     if (c != null)
@@ -84,6 +89,9 @@ namespace T7_OS_Lab4
                         a.CountRight = c.CountLeft + c.CountRight + 1;
                     else a.CountRight = 0;
                     b.CountLeft = a.CountLeft + a.CountRight + 1;
+
+                    if (_head == a)
+                        _head = b;
                 }
                 else
                 {
@@ -99,6 +107,11 @@ namespace T7_OS_Lab4
                     //var c = b.ChildLeft.Copy();
                     //var m = c.ChildLeft.Copy();
                     //var n = c.ChildRight.Copy();
+
+                    if (a.Parent != null)
+                        if (a.Parent.ChildLeft == a)
+                            a.Parent.ChildLeft = c;
+                        else a.Parent.ChildRight = c;
 
                     c.Parent = a.Parent;
                     a.Parent = c;
@@ -121,14 +134,17 @@ namespace T7_OS_Lab4
                     else b.CountLeft = 0;
                     c.CountLeft = a.CountLeft + a.CountRight + 1;
                     c.CountRight = b.CountLeft + b.CountRight + 1;
+
+                    if (_head == a)
+                        _head = c;
                 }
                 return;
             }
 
-            if (node.CountRight - node.CountLeft == 2)
+            if (node.CountLeft - node.CountRight == 2)
             {
                 // Small right
-                if (node.CountRight <= node.CountLeft)
+                if (node.ChildLeft.CountRight <= node.ChildLeft.CountLeft)
                 {
                     var a = node;
                     var b = node.ChildLeft;
@@ -138,18 +154,28 @@ namespace T7_OS_Lab4
                     //var b = node.ChildLeft.Copy();
                     //var c = b.ChildRight.Copy();
 
+                    if (a.Parent != null)
+                        if (a.Parent.ChildLeft == a)
+                            a.Parent.ChildLeft = b;
+                        else a.Parent.ChildRight = b;
+
                     b.Parent = a.Parent;
                     a.Parent = b;
+
                     if (c != null)
                         c.Parent = a;
+
 
                     a.ChildLeft = c;
                     b.ChildRight = a;
 
                     if (c != null)
                         a.CountLeft = c.CountLeft + c.CountRight + 1;
-                    else a.CountRight = 0;
+                    else a.CountLeft = 0;
                     b.CountRight = a.CountLeft + a.CountRight + 1;
+
+                    if (_head == a)
+                        _head = b;
                 }
                 else
                 {
@@ -164,6 +190,11 @@ namespace T7_OS_Lab4
                     //var c = b.ChildRight.Copy();
                     //var m = c.ChildLeft.Copy();
                     //var n = c.ChildRight.Copy();
+
+                    if (a.Parent != null)
+                        if (a.Parent.ChildLeft == a)
+                            a.Parent.ChildLeft = c;
+                        else a.Parent.ChildRight = c;
 
                     c.Parent = a.Parent;
                     a.Parent = c;
@@ -186,6 +217,9 @@ namespace T7_OS_Lab4
                     else a.CountLeft = 0;
                     c.CountLeft = b.CountLeft + b.CountRight + 1;
                     c.CountRight = a.CountLeft + a.CountRight + 1;
+
+                    if (_head == a)
+                        _head = b;
                 }
             }
         }
@@ -239,7 +273,7 @@ namespace T7_OS_Lab4
         {
             var node = new TreeViewItem
             {
-                Header = currentNode.Identifier,
+                Header = $"{currentNode.Identifier,4}    ({currentNode.CountLeft}, {currentNode.CountRight})",
                 IsExpanded = true
             };
 
