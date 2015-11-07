@@ -123,15 +123,16 @@ namespace T7_OS_Lab4
 
         private void ButtonRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl))
-            {
-                _tree = new BinaryTree();
-                TreeViewLeft.Items.Clear();
-                TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
-                HideRight();
-                //MessageBox.Show("Double");
-                return;
-            }
+            //if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            //{
+            //    _tree = new BinaryTree();
+            //    TreeViewLeft.Items.Clear();
+            //    TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
+            //    HideRight();
+            //    StatusBarTextBlock.Text = "Tree deleted";
+            //    //MessageBox.Show("Double");
+            //    return;
+            //}
 
             _tree.Find(TextBoxNewIdentifier.Text);
             if (_tree.WasFound)
@@ -153,10 +154,41 @@ namespace T7_OS_Lab4
 
         private void TextBoxNewIdentifier_TextChanged(object sender, TextChangedEventArgs e)
         {
+            var text = TextBoxNewIdentifier.Text;
+
+            if (3 < text.Length)
+            {
+                text = text.Substring(0, 3);
+                TextBoxNewIdentifier.Text = text;
+                TextBoxNewIdentifier.SelectionStart = 3;
+            }
+
+            if (text.Length == 3)
+            {
+                ButtonAdd.IsEnabled = true;
+                ButtonFind.IsEnabled = true;
+                ButtonRemove.IsEnabled = true;
+            }
+            else
+            {
+                ButtonAdd.IsEnabled = false;
+                ButtonFind.IsEnabled = false;
+                ButtonRemove.IsEnabled = false;
+            }
+
             HideRight();
             HidePath();
             StatusBarTextBlock.Text = "";
             //MessageBox.Show("Changed");
+        }
+
+        private void TreeViewLeft_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            _tree = new BinaryTree();
+            TreeViewLeft.Items.Clear();
+            TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
+            HideRight();
+            StatusBarTextBlock.Text = "Tree deleted";
         }
     }
 }
