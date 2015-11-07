@@ -29,22 +29,25 @@ namespace T7_OS_Lab4
             _marginTreeBottom = TreeViewLeft.Margin.Bottom;
 
 
+            _tree.Add("a");
+            _tree.Add("b");
+            //_tree.Add("c");
 
-            _tree.Add("mmm");
-            _tree.Add("ccc");
-            _tree.Add("aaa");
-            _tree.Add("ddd");
-            _tree.Add("eee");
-            _tree.Add("eea");
-            _tree.Add("nnn");
-            _tree.Add("ooo");
-            _tree.Add("ppp");
-            _tree.Add("ggg");
-            _tree.Add("gga");
-            _tree.Add("hhh");
-            _tree.Add("dda");
-            _tree.Add("nna");
-            _tree.Add("ooa");
+            //_tree.Add("mmm");
+            //_tree.Add("ccc");
+            //_tree.Add("aaa");
+            //_tree.Add("ddd");
+            //_tree.Add("eee");
+            //_tree.Add("eea");
+            //_tree.Add("nnn");
+            //_tree.Add("ooo");
+            //_tree.Add("ppp");
+            //_tree.Add("ggg");
+            //_tree.Add("gga");
+            //_tree.Add("hhh");
+            //_tree.Add("dda");
+            //_tree.Add("nna");
+            //_tree.Add("ooa");
             //TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
 
             HideRight();

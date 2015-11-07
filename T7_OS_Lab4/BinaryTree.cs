@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace T7_OS_Lab4
@@ -21,14 +21,172 @@ namespace T7_OS_Lab4
             public Node ChildLeft;
             public Node ChildRight;
             public Node Parent;
+            public int CountLeft;
+            public int CountRight;
 
-            public Node(string identifier, Node parent)
+            public Node(string identifier, Node parent, int countLeft, int countRight)
             {
                 Identifier = identifier;
                 Parent = parent;
 
                 ChildLeft = null;
                 ChildRight = null;
+
+                CountLeft = countLeft;
+                CountRight = countRight;
+            }
+
+            private Node(string identifier, Node parent, Node childLeft, Node childRight, int countLeft, int countRight)
+            {
+                Identifier = identifier;
+                Parent = parent;
+
+                ChildLeft = null;
+                ChildRight = null;
+
+                CountLeft = countLeft;
+                CountRight = countRight;
+
+                ChildLeft = childLeft;
+                ChildRight = childRight;
+            }
+
+            public Node Copy()
+            {
+                return new Node(Identifier, Parent, ChildLeft, ChildRight, CountLeft, CountRight);
+            }
+        }
+
+        private void Balance(Node node)
+        {
+            if (node.CountRight - node.CountLeft == 2)
+            {
+                // Small left
+                if (node.ChildRight.CountLeft <= node.ChildRight.CountRight)
+                {
+                    var a = node;
+                    var b = node.ChildRight;
+                    var c = b.ChildLeft;
+
+                    //var a = node.Copy();
+                    //var b = node.ChildRight.Copy();
+                    //var c = b.ChildLeft.Copy();
+
+                    b.Parent = a.Parent;
+                    a.Parent = b;
+                    if (c != null)
+                        c.Parent = a;
+
+                    b.ChildLeft = a;
+                    a.ChildRight = c;
+
+                    if (c != null)
+                        a.CountRight = c.CountLeft + c.CountRight + 1;
+                    else a.CountRight = 0;
+                    b.CountLeft = a.CountLeft + a.CountRight + 1;
+                }
+                else
+                {
+                    // Big left
+                    var a = node;
+                    var b = a.ChildRight;
+                    var c = b.ChildLeft;
+                    var m = c.ChildLeft;
+                    var n = c.ChildRight;
+
+                    //var a = node.Copy();
+                    //var b = a.ChildRight.Copy();
+                    //var c = b.ChildLeft.Copy();
+                    //var m = c.ChildLeft.Copy();
+                    //var n = c.ChildRight.Copy();
+
+                    c.Parent = a.Parent;
+                    a.Parent = c;
+                    b.Parent = c;
+                    if (m != null)
+                        m.Parent = a;
+                    if (n != null)
+                        n.Parent = b;
+
+                    a.ChildRight = m;
+                    b.ChildLeft = n;
+                    c.ChildLeft = a;
+                    c.ChildRight = b;
+
+                    if (m != null)
+                        a.CountRight = m.CountLeft + m.CountRight + 1;
+                    else a.CountRight = 0;
+                    if (n != null)
+                        b.CountLeft = n.CountLeft + n.CountRight + 1;
+                    else b.CountLeft = 0;
+                    c.CountLeft = a.CountLeft + a.CountRight + 1;
+                    c.CountRight = b.CountLeft + b.CountRight + 1;
+                }
+                return;
+            }
+
+            if (node.CountRight - node.CountLeft == 2)
+            {
+                // Small right
+                if (node.CountRight <= node.CountLeft)
+                {
+                    var a = node;
+                    var b = node.ChildLeft;
+                    var c = b.ChildRight;
+
+                    //var a = node.Copy();
+                    //var b = node.ChildLeft.Copy();
+                    //var c = b.ChildRight.Copy();
+
+                    b.Parent = a.Parent;
+                    a.Parent = b;
+                    if (c != null)
+                        c.Parent = a;
+
+                    a.ChildLeft = c;
+                    b.ChildRight = a;
+
+                    if (c != null)
+                        a.CountLeft = c.CountLeft + c.CountRight + 1;
+                    else a.CountRight = 0;
+                    b.CountRight = a.CountLeft + a.CountRight + 1;
+                }
+                else
+                {
+                    var a = node;
+                    var b = a.ChildRight;
+                    var c = b.ChildRight;
+                    var m = c.ChildLeft;
+                    var n = c.ChildRight;
+
+                    //var a = node.Copy();
+                    //var b = a.ChildRight.Copy();
+                    //var c = b.ChildRight.Copy();
+                    //var m = c.ChildLeft.Copy();
+                    //var n = c.ChildRight.Copy();
+
+                    c.Parent = a.Parent;
+                    a.Parent = c;
+                    b.Parent = c;
+                    if (m != null)
+                        m.Parent = b;
+                    if (n != null)
+                        n.Parent = a;
+
+                    b.ChildRight = m;
+                    a.ChildLeft = n;
+                    c.ChildLeft = b;
+                    c.ChildRight = a;
+
+                    if (m != null)
+                        b.CountRight = m.CountLeft + m.CountRight + 1;
+                    else b.CountRight = 0;
+                    if (n != null)
+                        a.CountLeft = n.CountLeft + n.CountRight + 1;
+                    else a.CountLeft = 0;
+                    c.CountLeft = b.CountLeft + b.CountRight + 1;
+                    c.CountRight = a.CountLeft + a.CountRight + 1;
+                }
             }
         }
 
@@ -38,10 +196,14 @@ namespace T7_OS_Lab4
             {
                 if (currentNode.ChildLeft == null)
                 {
-                    currentNode.ChildLeft = new Node(_identifier, currentNode);
+                    currentNode.ChildLeft = new Node(_identifier, currentNode, 0, 0);
+                    currentNode.CountLeft++;
                     return;
                 }
+                currentNode.CountLeft++;
                 AddRecursive(currentNode.ChildLeft);
+                if (Math.Abs(currentNode.CountLeft - currentNode.CountRight) == 2)
+                    Balance(currentNode);
             }
 
             // ReSharper disable once InvertIf
@@ -49,10 +211,14 @@ namespace T7_OS_Lab4
             {
                 if (currentNode.ChildRight == null)
                 {
-                    currentNode.ChildRight = new Node(_identifier, currentNode);
+                    currentNode.ChildRight = new Node(_identifier, currentNode, 0, 0);
+                    currentNode.CountRight++;
                     return;
                 }
+                currentNode.CountRight++;
                 AddRecursive(currentNode.ChildRight);
+                if (Math.Abs(currentNode.CountLeft - currentNode.CountRight) == 2)
+                    Balance(currentNode);
             }
         }
 
@@ -60,7 +226,7 @@ namespace T7_OS_Lab4
         {
             if (_head == null)
             {
-                _head = new Node(identifier, null);
+                _head = new Node(identifier, null, 0, 0);
                 return;
             }
 
@@ -90,7 +256,6 @@ namespace T7_OS_Lab4
 
         public TreeViewItem ToTreeViewItem()
         {
-            //MessageBox.Show("Changed");
             return _head != null ? ToTreeViewItemRecursive(_head) : null;
         }
 
