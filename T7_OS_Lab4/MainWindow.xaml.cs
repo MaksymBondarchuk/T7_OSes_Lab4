@@ -14,8 +14,6 @@ namespace T7_OS_Lab4
         private readonly double _marginTreeTop;
         private readonly double _marginTreeRight;
         private readonly double _marginTreeBottom;
-        //private Thickness _marginWithPath;
-        //private Thickness _marginWithoutPath;
 
         private bool _rightHidden;
         private bool _pathHidden;
@@ -28,28 +26,6 @@ namespace T7_OS_Lab4
             _marginTreeTop = TreeViewLeft.Margin.Top;
             _marginTreeRight = TreeViewLeft.Margin.Right;
             _marginTreeBottom = TreeViewLeft.Margin.Bottom;
-
-
-            //_tree.Add("y");
-            //_tree.Add("z");
-            //_tree.Add("c");
-
-            //_tree.Add("mmm");
-            //_tree.Add("ccc");
-            //_tree.Add("aaa");
-            //_tree.Add("ddd");
-            //_tree.Add("eee");
-            //_tree.Add("eea");
-            //_tree.Add("nnn");
-            //_tree.Add("ooo");
-            //_tree.Add("ppp");
-            //_tree.Add("ggg");
-            //_tree.Add("gga");
-            //_tree.Add("hhh");
-            //_tree.Add("dda");
-            //_tree.Add("nna");
-            //_tree.Add("ooa");
-            //TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
 
             HideRight();
             HidePath();
@@ -123,17 +99,6 @@ namespace T7_OS_Lab4
 
         private void ButtonRemove_Click(object sender, RoutedEventArgs e)
         {
-            //if (Keyboard.IsKeyDown(Key.LeftCtrl))
-            //{
-            //    _tree = new BinaryTree();
-            //    TreeViewLeft.Items.Clear();
-            //    TreeViewLeft.Items.Add(_tree.ToTreeViewItem());
-            //    HideRight();
-            //    StatusBarTextBlock.Text = "Tree deleted";
-            //    //MessageBox.Show("Double");
-            //    return;
-            //}
-
             _tree.Find(TextBoxNewIdentifier.Text);
             if (_tree.WasFound)
             {
@@ -179,7 +144,6 @@ namespace T7_OS_Lab4
             HideRight();
             HidePath();
             StatusBarTextBlock.Text = "";
-            //MessageBox.Show("Changed");
         }
 
         private void TreeViewLeft_MouseDoubleClick(object sender, MouseButtonEventArgs e)
